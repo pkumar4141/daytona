@@ -1,0 +1,60 @@
+node('yash2') {
+     stage('cloning git'){
+     git credentialsId: 'root', url: 'http://35.237.166.25/root/devops.git'
+     }
+     stage('code compile and package and code smells'){
+     sh '''
+     cd devops/devops
+     pwd
+     id
+     mvn clean compile sonar:sonar -Dsonar.host.url=http://10.142.0.22:9000 -Dsonar.login=42cec1d86f7482750e7a04d523a9482a2eee5492
+         '''
+      }
+
+     stage('deploy'){
+     sh '''
+     cd devops/devops
+     mvn clean package deploy
+      '''
+}
+}
+node ('yash1') {
+     stage('cloning git'){
+     git credentialsId: 'root', url: 'http://35.237.166.25/root/devops.git'
+     }
+     stage('docker file modification'){
+     sh '''
+     VER=$(curl -s http://10.142.0.17:8081/repository/devops_snapshot/co/daytona/test/devops/0.0.1-SNAPSHOT/maven-metadata.xml|grep 0.0.1|grep -v SNAPSHOT |cut -d '>' -f2|cut -d '<' -f1|head -1)
+     cd devops/
+     NUM=$(cat Dockerfile | grep ENV | grep FINVER |cut -d '=' -f2)
+     sed -i 's/$NUM/$VER/g' Dockerfile
+     docker build -t yash4993/app .
+     docker push yash4993/app
+     docker 2>/dev/null 1>&2 rm -f `docker ps -a -q` || true
+     docker run -d -p 8081:8080 --name app1 --restart always yash4993/app
+     docker run -d -p 8082:8080 --name app2 --restart always yash4993/app
+     cd ngnix
+     docker build -t yash4993/nginx .
+     docker push yash4993/nginx
+     docker run -d -p 8080:8080 --name nginx --net=host --restart always yash4993/nginx
+      '''
+}
+}     
+node ('yash2'){
+stage('cloning git'){
+     git credentialsId: 'root', url: 'http://35.237.166.25/root/devops.git'
+     }
+stage('docker file modification'){
+     sh '''
+     cd devops/     
+     docker 2>/dev/null 1>&2 rm -f `docker ps -a -q` || true
+     docker run -d -p 8081:8080 --name app1 --restart always yash4993/app
+     docker run -d -p 8082:8080 --name app2 --restart always yash4993/app
+     cd ngnix
+     docker run -d -p 8080:8080 --name nginx --net=host --restart always yash4993/nginx
+     '''
+}
+}
+
+     
+
