@@ -37,7 +37,7 @@ node ('yash1') {
 }
 
 node ('kubernet'){
-     satge('perform blue green deployment'){
+     stage('perform blue green deployment'){
      sh '''
      bg-deploy.sh app-deploy-green.yml
      '''
