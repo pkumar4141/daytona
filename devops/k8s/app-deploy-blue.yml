@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: springboot-v1
+  name: springboot-blue
 spec:
   replicas: 3
   strategy:
