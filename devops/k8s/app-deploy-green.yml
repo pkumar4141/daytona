@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: springboot-v2
+  name: springboot-green
 spec:
   replicas: 3
   strategy:
@@ -30,10 +30,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: springboot-green
+  name: springboot
   labels:
-    name: springboot-green
-    version: "v2"
+    name: springboot
+    version: "v1"
 spec:
   ports:
     - port: 8080
