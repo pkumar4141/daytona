@@ -39,8 +39,14 @@ node ('yash1') {
 node ('kubernet'){
      stage('perform blue green deployment'){
      sh '''
+     LOG=/home/log/kubelog
+     kubectl get deployment app-deploy-green.yml &>>$LOG
+     if [$? -ne 0];then
+     kubectl delete deplyoment.apps/springboot-blue
      bg-deploy.sh app-deploy-green.yml
+     else
+     kubectl delete deplyoment.apps/springboot-green
+     bg-deploy.sh app-deploy-blue.yml
+     fi
      '''
  }
-}
-
