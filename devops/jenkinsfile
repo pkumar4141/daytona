@@ -24,10 +24,10 @@ node ('yash1') {
      }
      stage('docker file modification'){
      sh '''
-     VER=$(curl -s http://10.142.0.17:8081/repository/devops_snapshot/co/daytona/test/devops/0.0.1-SNAPSHOT/maven-metadata.xml|grep 0.0.1|grep -v SNAPSHOT |cut -d '>' -f2|cut -d '<' -f1|head -1)
      cd devops/
+     VER=$(curl -s http://10.142.0.17:8081/repository/devops_snapshot/co/daytona/test/devops/0.0.1-SNAPSHOT/maven-metadata.xml|grep 0.0.1|grep -v SNAPSHOT |cut -d '>' -f2|cut -d '<' -f1|head -1)
      NUM=$(cat Dockerfile | grep ENV | grep FINVER |cut -d '=' -f2)
-     sed -i 's/$NUM/$VER/g' Dockerfile
+     sed -i "s/$NUM/$VER/g" Dockerfile
      docker build -t yash4993/app .
      docker push yash4993/app
      docker 2>/dev/null 1>&2 rm -f `docker ps -a -q` || true
