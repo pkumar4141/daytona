@@ -1,0 +1,21 @@
+- name: db user creation
+  host: localhost
+
+  vars_prompt:
+   - name: "admin_password"    
+     prompt: "Enter a password for the user"    
+     private: yes    
+    
+
+- name: Config System Admin
+  fortiosconfig:
+   action: "set"
+   host: "10.0.100.14"
+   username: "javon"
+   password: "{{admin_password}}"
+   vdom:  "root"
+   config: "system admin"
+   config_parameters:
+     name: test
+     accprofile: super_admin
+     password: test.001$
