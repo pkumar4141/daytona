@@ -1,5 +1,5 @@
 
-de('yash2') {
+node('yash2') {
      stage('cloning git'){
      git credentialsId: 'root', url: 'http://35.237.166.25/root/devops.git'
      }
